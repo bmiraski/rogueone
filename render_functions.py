@@ -1,6 +1,6 @@
 """Render entities on the page."""
 
-import tcod as libtcod
+import tcod
 import tcod.map
 
 
@@ -14,23 +14,27 @@ def render_all(con, entities, game_map, fov_map, fov_recompute, screen_width,
 
                 if visible:
                     if wall:
-                        libtcod.console_set_char_background(con, x, y, colors.get('light_wall'))
+                        tcod.console_set_char_background(con, x, y,
+                                                         colors.get('light_wall'))
                     else:
-                        libtcod.console_set_char_background(con, x, y, colors.get('light_ground'))
+                        tcod.console_set_char_background(con, x, y,
+                                                         colors.get('light_ground'))
 
                     game_map.tiles[x][y].explored = True
 
                 elif game_map.tiles[x][y].explored:
                     if wall:
-                        libtcod.console_set_char_background(con, x, y, colors.get('dark_wall'))
+                        tcod.console_set_char_background(con, x, y,
+                                                         colors.get('dark_wall'))
                     else:
-                        libtcod.console_set_char_background(con, x, y, colors.get('dark_ground'))
+                        tcod.console_set_char_background(con, x, y,
+                                                         colors.get('dark_ground'))
 
     # Draw all entities in the list
     for entity in entities:
         draw_entity(con, entity, fov_map)
 
-    libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
+    tcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
 
 
 def clear_all(con, entities):
@@ -40,11 +44,11 @@ def clear_all(con, entities):
 
 def draw_entity(con, entity, fov_map):
     if fov_map.fov[entity.y, entity.x]:
-        libtcod.console_set_default_foreground(con, entity.color)
-        libtcod.console_put_char(con, entity.x, entity.y, entity.char,
-                                 libtcod.BKGND_NONE)
+        tcod.console_set_default_foreground(con, entity.color)
+        tcod.console_put_char(con, entity.x, entity.y, entity.char,
+                              tcod.BKGND_NONE)
 
 
 def clear_entity(con, entity):
     # erase the character that represents this object
-    libtcod.console_put_char(con, entity.x, entity.y, ' ', libtcod.BKGND_NONE)
+    tcod.console_put_char(con, entity.x, entity.y, ' ', tcod.BKGND_NONE)
