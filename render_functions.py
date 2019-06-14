@@ -86,7 +86,7 @@ def render_all(con, panel, entities, player, game_map, fov_map, fov_recompute,
                tcod.light_red, tcod.darker_red)
 
     tcod.console_set_default_foreground(panel, tcod.light_gray)
-    tcod.console_print_ex(panel, 1, 0, tcod.BKGD_NONE, tcod.LEFT,
+    tcod.console_print_ex(panel, 1, 0, tcod.BKGND_NONE, tcod.LEFT,
                           get_names_under_mouse(mouse, entities, fov_map))
 
     tcod.console_blit(panel, 0, 0, screen_width, panel_height, 0, 0, panel_y)
