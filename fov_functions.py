@@ -1,4 +1,4 @@
-import tcod as libtcod
+import tcod
 import tcod.map
 
 
