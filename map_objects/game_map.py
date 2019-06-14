@@ -4,6 +4,7 @@ from entity import Entity
 from map_objects.rectangle import Rect
 from map_objects.tile import Tile
 from random import randint
+from render_functions import RenderOrder
 
 import tcod
 
@@ -106,12 +107,13 @@ class GameMap:
                     fighter_component = Fighter(hp=10, defense=0, power=3)
                     ai_component = BasicMonster()
                     monster = Entity(x, y, 'o', tcod.desaturated_green, 'Orc',
-                                     blocks=True, fighter=fighter_component,
-                                     ai=ai_component)
+                                     blocks=True, render_order=RenderOrder.ACTOR,
+                                     fighter=fighter_component, ai=ai_component)
                 else:
                     fighter_component = Fighter(hp=16, defense=1, power=4)
                     ai_component = BasicMonster()
                     monster = Entity(x, y, 'T', tcod.darker_green, 'Troll', blocks=True,
+                                     render_order=RenderOrder.ACTOR,
                                      fighter=fighter_component, ai=ai_component)
 
                 entities.append(monster)
