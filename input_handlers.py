@@ -1,6 +1,19 @@
 """Handle inputs from user for roguelike game."""
 
+from game_states import GameStates
+
 import tcod
+
+
+def handle_keys(key, game_state):
+    if game_state == GameStates.PLAYERS_TURN:
+        return handle_player_turn_keys(key)
+    elif game_state == GameStates.PLAYER_DEAD:
+        return handle_player_dead_keys(key)
+    elif game_state == GameStates.SHOW_INVENTORY:
+        return handle_inventory_keys(key)
+
+    return {}
 
 
 # Move keys:
@@ -8,7 +21,7 @@ import tcod
 # h j k
 # n m ,
 
-def handle_keys(key):
+def handle_player_turn_keys(key):
     key_char = chr(key.c)
     # Movement keys
     if key.vk == tcod.KEY_UP or key_char == 'u':
@@ -31,6 +44,9 @@ def handle_keys(key):
     if key_char == 'g':
         return {'pickup': True}
 
+    elif key_char == 'p':
+        return {'show_inventory': True}
+
     if key.vk == tcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
         return {'fullscreen': True}
@@ -40,4 +56,31 @@ def handle_keys(key):
         return {'exit': True}
 
     # No key was pressed
+    return {}
+
+
+def handle_player_dead_keys(key):
+    key_char = chr(key.c)
+    if key_char == 'p':
+        return {'show_inventory': True}
+
+    if key.vk == tcod.KEY_ENTER and key.lalt:
+        return {'full_screen': True}
+    elif key.vk == tcod.KEY_ESCAPE:
+        return {'exit': True}
+
+    return {}
+
+
+def handle_inventory_keys(key):
+    index = key.c - ord('a')
+
+    if index >= 0:
+        return {'inventory_index': index}
+
+    if key.vk == tcod.KEY_ENTER and key.lalt:
+        return {'full_screen': True}
+    elif key.vk == tcod.KEY_ESCAPE:
+        return {'exit': True}
+
     return {}
