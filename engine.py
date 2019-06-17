@@ -33,7 +33,7 @@ def main():
     message_height = panel_height - 1
 
     map_width = 80
-    map_height = 43
+    map_height = 42
 
     room_max_size = 10
     room_min_size = 6
@@ -110,6 +110,7 @@ def main():
         pickup = action.get('pickup')
         show_inventory = action.get('show_inventory')
         inventory_index = action.get('inventory_index')
+        drop_inventory = action.get('drop_inventory')
         exit = action.get('exit')
         fullscreen = action.get('fullscreen')
 
@@ -150,14 +151,22 @@ def main():
             previous_game_state = game_state
             game_state = GameStates.SHOW_INVENTORY
 
+        if drop_inventory:
+            previous_game_state = game_state
+            game_state = GameStates.DROP_INVENTORY
+
         if inventory_index is not None and \
             previous_game_state != GameStates.PLAYER_DEAD and \
                 inventory_index < len(player.inventory.items):
             item = player.inventory.items[inventory_index]
-            print(item)
+
+            if game_state == GameStates.SHOW_INVENTORY:
+                player_turn_results.extend(player.inventory.use(item))
+            elif game_state == GameStates.DROP_INVENTORY:
+                player_turn_results.extend(player.inventory.drop_item(item))
 
         if exit:
-            if game_state == GameStates.SHOW_INVENTORY:
+            if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
                 game_state = previous_game_state
             else:
                 return True
@@ -169,6 +178,8 @@ def main():
             message = player_turn_result.get('message')
             dead_entity = player_turn_result.get('dead')
             item_added = player_turn_result.get('item_added')
+            item_consumed = player_turn_result.get('consumed')
+            item_dropped = player_turn_result.get('item_dropped')
 
             if message:
                 message_log.add_message(message)
@@ -183,6 +194,13 @@ def main():
 
             if item_added:
                 entities.remove(item_added)
+                game_state = GameStates.ENEMY_TURN
+
+            if item_consumed:
+                game_state = GameStates.ENEMY_TURN
+
+            if item_dropped:
+                entities.append(item_dropped)
                 game_state = GameStates.ENEMY_TURN
 
         if game_state == GameStates.ENEMY_TURN:
