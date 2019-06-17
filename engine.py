@@ -33,7 +33,7 @@ def main():
     message_height = panel_height - 1
 
     map_width = 80
-    map_height = 42
+    map_height = 42  # This is 43 in tutorial but raised error. Check later.
 
     room_max_size = 10
     room_min_size = 6
