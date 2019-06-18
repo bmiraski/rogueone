@@ -1,3 +1,4 @@
+from components.ai import ConfusedMonster
 from game_messages import Message
 
 import tcod
@@ -94,5 +95,45 @@ def cast_fireball(*args, **kwargs):
                                                tcod.orange)
                             })
             results.extend(entity.fighter.take_damage(damage))
+
+    return results
+
+
+def cast_confuse(*args, **kwargs):
+    entities = kwargs.get('entities')
+    fov_map = kwargs.get('fov_map')
+    target_x = kwargs.get('target_x')
+    target_y = kwargs.get('target_y')
+
+    results = []
+
+    if not fov_map.fov[target_y, target_x]:
+        results.append({'consumed': False,
+                        'message': Message(
+                            'You cannot target a tile outside your field of view.',
+                            tcod.yellow)})
+        return results
+
+    for entity in entities:
+        if entity.x == target_x and entity.y == target_y and entity.ai:
+            confused_ai = ConfusedMonster(entity.ai, 10)
+
+            confused_ai.owner = entity
+            entity.ai = confused_ai
+
+            results.append({
+                'consumed': True,
+                'message': Message(f'''The eyes of the {
+                    entity.name} look vacant, as he starts to stumble around!''',
+                                   tcod.light_green)
+                            })
+            break
+
+    else:
+        results.append({'consumed': False,
+                        'message': Message(
+                            'There is no targetable enemy at that location.',
+                            tcod.yellow
+                                           )})
 
     return results
