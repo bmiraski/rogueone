@@ -52,6 +52,9 @@ def handle_player_turn_keys(key):
     elif key_char == 'd':
         return {'drop_inventory': True}
 
+    elif key.vk == tcod.KEY_ENTER:
+        return {'take_stairs': True}
+
     if key.vk == tcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
         return {'fullscreen': True}
