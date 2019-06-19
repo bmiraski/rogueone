@@ -57,5 +57,36 @@ def main_menu(con, background_image, screen_width, screen_height):
          screen_height)
 
 
+def level_up_menu(con, header, player, menu_width, screen_width, screen_height):
+    options = [f'Constitution (+20 HP, from {player.fighter.max_hp})',
+               f'Strength (+1 attack, from {player.fighter.power})',
+               f'Agility (+1 defense, from {player.fighter.defense})']
+
+    menu(con, header, options, menu_width, screen_width, screen_height)
+
+
+def character_screen(player, character_screen_width, character_screen_height,
+                     screen_width, screen_height):
+    window = tcod.console_new(character_screen_width, character_screen_height)
+    tcod.console_set_default_foreground(window, tcod.white)
+
+    info = ['Character Information', f'Level: {player.level.current_level}',
+            f'Experience: {player.level.current_xp}',
+            f'Experience to Level: {player.level.experience_to_next_level}',
+            f'Maximum HP: {player.fighter.max_hp}',
+            f'Attack: {player.fighter.power}',
+            f'Defense: {player.fighter.defense}']
+
+    for i in range(1, 8):
+        tcod.console_print_rect_ex(window, 0, i, character_screen_width,
+                                   character_screen_height, tcod.BKGND_NONE,
+                                   tcod.LEFT, info[i - 1])
+
+    x = screen_width // 2 - character_screen_width // 2
+    y = screen_height // 2 - character_screen_height // 2
+    tcod.console_blit(window, 0, 0, character_screen_width, character_screen_height,
+                      0, x, y, 1.0, 0.7)
+
+
 def message_box(con, header, width, screen_width, screen_height):
     menu(con, header, [], width, screen_width, screen_height)
