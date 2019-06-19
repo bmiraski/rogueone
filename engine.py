@@ -16,6 +16,7 @@ from loader_functions.initialize_new_game import get_constants
 from loader_functions.initialize_new_game import get_game_variables
 from menus import main_menu
 from menus import message_box
+from random import randint
 from render_functions import clear_all
 from render_functions import render_all
 
@@ -130,6 +131,7 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel,
         mouse_action = handle_mouse(mouse)
 
         move = action.get('move')
+        wait = action.get('wait')
         pickup = action.get('pickup')
         show_inventory = action.get('show_inventory')
         inventory_index = action.get('inventory_index')
@@ -163,6 +165,14 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel,
                     fov_recompute = True
 
                 game_state = GameStates.ENEMY_TURN
+
+        elif wait:
+            if randint(0, 100) <= 10:
+                player.fighter.heal(1)
+                message_log.add_message(Message(
+                    'You feel slightly refreshed after a short rest.',
+                    tcod.green))
+            game_state = GameStates.ENEMY_TURN
 
         elif pickup and game_state == GameStates.PLAYERS_TURN:
             for entity in entities:
@@ -309,7 +319,6 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel,
                     ))
                     previous_game_state = game_state
                     game_state = GameStates.LEVEL_UP
-                    print(game_state)
 
         if game_state == GameStates.ENEMY_TURN:
             for entity in entities:
