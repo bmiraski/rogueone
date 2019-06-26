@@ -1,4 +1,6 @@
 from components.ai import BasicMonster
+from components.equipment import EquipmentSlots
+from components.equippable import Equippable
 from components.fighter import Fighter
 from components.item import Item
 from components.stairs import Stairs
@@ -103,12 +105,12 @@ class GameMap:
                 self.tiles[x][y].block_sight = False
 
     def create_h_tunnel(self, x1, x2, y):
-        for x in range(min(x1, x2), max(x1, x2)):
+        for x in range(min(x1, x2), max(x1, x2) + 1):
             self.tiles[x][y].blocked = False
             self.tiles[x][y].block_sight = False
 
     def create_v_tunnel(self, y1, y2, x):
-        for y in range(min(y1, y2), max(y1, y2)):
+        for y in range(min(y1, y2), max(y1, y2) + 1):
             self.tiles[x][y].blocked = False
             self.tiles[x][y].block_sight = False
 
@@ -125,6 +127,8 @@ class GameMap:
                            'troll': from_dungeon_level([[15, 3], [30, 5], [60, 7]],
                                                        self.dungeon_level)}
         item_chances = {'healing_potion': 35,
+                        'sword': from_dungeon_level([[5, 4]], self.dungeon_level),
+                        'shield': from_dungeon_level([[15, 8]], self.dungeon_level),
                         'lightning_scroll': from_dungeon_level([[25, 4]],
                                                                self.dungeon_level),
                         'fireball_scroll': from_dungeon_level([[25, 6]],
@@ -170,6 +174,18 @@ class GameMap:
                     item_component = Item(use_function=heal, amount=40)
                     item = Entity(x, y, '!', tcod.violet, 'Healing Potion',
                                   render_order=RenderOrder.ITEM, item=item_component)
+
+                elif item_choice == 'sword':
+                    equippable_component = Equippable(EquipmentSlots.MAIN_HAND,
+                                                      power_bonus=3)
+                    item = Entity(x, y, '/', tcod.sky, 'Sword',
+                                  equippable=equippable_component)
+
+                elif item_choice == 'shield':
+                    equippable_component = Equippable(EquipmentSlots.OFF_HAND,
+                                                      defense_bonus=1)
+                    item = Entity(x, y, '[', tcod.darker_orange, 'Shield',
+                                  equippable=equippable_component)
 
                 elif item_choice == 'fireball_scroll':
                     item_component = Item(
